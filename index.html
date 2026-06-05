@@ -7,22 +7,71 @@
 <title>Threads 認可</title>
 <style>
  body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:#0f1b2d;color:#fff;margin:0;display:flex;min-height:100vh;align-items:center;justify-content:center;padding:24px}
- .card{max-width:480px;width:100%;text-align:center}
- h1{font-size:20px;margin:0 0 10px}
- p{color:#aab4c4;font-size:14px;line-height:1.7}
- a.btn{display:block;margin:16px 0;padding:16px 20px;border-radius:10px;text-decoration:none;font-weight:bold;font-size:16px}
+ .card{max-width:520px;width:100%;text-align:center}
+ h1{font-size:20px;margin:0 0 8px}
+ p{color:#aab4c4;font-size:14px;line-height:1.7;margin:8px 0}
+ a.btn{display:block;margin:12px 0;padding:16px 20px;border-radius:10px;text-decoration:none;font-weight:bold;font-size:16px}
  .primary{background:#12263A;color:#7fb2ff;border:1px solid #2a6df4}
- .second{background:#243246;color:#cfd8e6;font-weight:normal}
- .note{font-size:12px;color:#7a879b}
+ .note{font-size:12px;color:#7a879b;margin-top:12px}
+ /* コールバック表示 */
+ .code-box{margin:16px 0;padding:16px;background:#1a2d1a;border:1px solid #2a6d2a;border-radius:10px;word-break:break-all;font-family:monospace;font-size:13px;color:#7eff7e;text-align:left;cursor:pointer;position:relative}
+ .code-box::after{content:"タップでコピー";position:absolute;top:8px;right:10px;font-size:11px;color:#7a879b;font-family:system-ui}
+ .copied{color:#fff;font-size:13px;margin:4px 0}
+ .hidden{display:none}
 </style>
 </head>
 <body>
-<div class="card">
- <h1>Threads 認可ページへ</h1>
- <p>下のボタンを押すと Threads の「許可」画面に進みます。<br>先に <b>@ai_ryu_fukugyo</b> でログイン済みの状態で。</p>
- <a class="btn primary" href="https://www.threads.com/oauth/authorize?client_id=2113544849214970&amp;redirect_uri=https%3A%2F%2Fairyufukugyo.github.io%2Fai-linkpage%2F&amp;scope=threads_basic%2Cthreads_content_publish&amp;response_type=code">① 本番（投稿権限つき）で進む</a>
- <a class="btn second" href="https://www.threads.com/oauth/authorize?client_id=2113544849214970&amp;redirect_uri=https%3A%2F%2Fairyufukugyo.github.io%2Fai-linkpage%2F&amp;scope=threads_basic&amp;response_type=code">② 基本のみ（①がエラーの時だけ）</a>
- <p class="note">「許可」後 …/ai-linkpage/?code=XXXX#_ に飛びます。その code= の後ろ（#_ の手前まで）をコピーしてチャットへ。</p>
-</div>
+<div class="card" id="root"></div>
+<script>
+const APP_ID = "2113544849214970";
+const REDIRECT = "https://airyufukugyo.github.io/th/";
+const SCOPE = "threads_basic,threads_content_publish,threads_delete";
+
+const q = Object.fromEntries(new URLSearchParams(location.search));
+
+if (q.code) {
+  // コールバック: codeを表示してコピーさせる
+  document.getElementById("root").innerHTML = `
+    <h1>code をコピーしてチャットへ</h1>
+    <p>以下をタップしてコピー → チャットに貼り付け</p>
+    <div class="code-box" id="cb">${q.code}</div>
+    <p class="copied hidden" id="msg">コピーしました</p>
+    <p class="note">このページは閉じてOKです</p>
+  `;
+  document.getElementById("cb").addEventListener("click", () => {
+    navigator.clipboard.writeText(q.code).then(() => {
+      document.getElementById("msg").classList.remove("hidden");
+    }).catch(() => {
+      // clipboard API 非対応の場合はselection
+      const r = document.createRange();
+      r.selectNodeContents(document.getElementById("cb"));
+      window.getSelection().removeAllRanges();
+      window.getSelection().addRange(r);
+      document.getElementById("msg").textContent = "選択済み（長押しでコピー）";
+      document.getElementById("msg").classList.remove("hidden");
+    });
+  });
+} else if (q.error) {
+  document.getElementById("root").innerHTML = `
+    <h1>エラー</h1>
+    <p style="color:#ff7e7e">${q.error}: ${q.error_description || ""}</p>
+    <a class="btn primary" href="${REDIRECT}">最初からやり直す</a>
+  `;
+} else {
+  // 認可開始ページ
+  const authUrl = "https://www.threads.com/oauth/authorize?" + new URLSearchParams({
+    client_id: APP_ID,
+    redirect_uri: REDIRECT,
+    scope: SCOPE,
+    response_type: "code"
+  });
+  document.getElementById("root").innerHTML = `
+    <h1>Threads 認可</h1>
+    <p><b>@ai_ryu_fukugyo</b> でログイン済みの状態で↓</p>
+    <a class="btn primary" href="${authUrl}">Threads で許可する</a>
+    <p class="note">許可後このページに戻り、code が自動表示されます</p>
+  `;
+}
+</script>
 </body>
 </html>

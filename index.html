@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Threads 認可</title>
+<style>
+ body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:#0f1b2d;color:#fff;margin:0;display:flex;min-height:100vh;align-items:center;justify-content:center;padding:24px}
+ .card{max-width:480px;width:100%;text-align:center}
+ h1{font-size:20px;margin:0 0 10px}
+ p{color:#aab4c4;font-size:14px;line-height:1.7}
+ a.btn{display:block;margin:16px 0;padding:16px 20px;border-radius:10px;text-decoration:none;font-weight:bold;font-size:16px}
+ .primary{background:#12263A;color:#7fb2ff;border:1px solid #2a6df4}
+ .second{background:#243246;color:#cfd8e6;font-weight:normal}
+ .note{font-size:12px;color:#7a879b}
+</style>
+</head>
+<body>
+<div class="card">
+ <h1>Threads 認可ページへ</h1>
+ <p>下のボタンを押すと Threads の「許可」画面に進みます。<br>先に <b>@ai_ryu_fukugyo</b> でログイン済みの状態で。</p>
+ <a class="btn primary" href="https://www.threads.com/oauth/authorize?client_id=27557679683872835&amp;redirect_uri=https%3A%2F%2Fairyufukugyo.github.io%2Fai-linkpage%2F&amp;scope=threads_basic%2Cthreads_content_publish&amp;response_type=code">① 本番（投稿権限つき）で進む</a>
+ <a class="btn second" href="https://www.threads.com/oauth/authorize?client_id=27557679683872835&amp;redirect_uri=https%3A%2F%2Fairyufukugyo.github.io%2Fai-linkpage%2F&amp;scope=threads_basic&amp;response_type=code">② 基本のみ（①がエラーの時だけ）</a>
+ <p class="note">「許可」後 …/ai-linkpage/?code=XXXX#_ に飛びます。その code= の後ろ（#_ の手前まで）をコピーしてチャットへ。</p>
+</div>
+</body>
+</html>
